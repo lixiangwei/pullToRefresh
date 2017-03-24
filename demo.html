@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+		<style>
+		html{
+			height:100%;
+		}
+		body{
+			font-family: "宋体", Arial, Helvetica, sans-serif;
+			color: #00418e;
+			margin:0;
+			font-size: 14px;
+			height:100%;
+		}
+		</style>
+    </head>
+	
+    <body>
+	
+		<!---->
+		<div id="wraper">111111111111111111<br>111111111111111111<br>111111111111111111<br>111111111111111111<br>111111111111111111<br>111111111111111111<br>111111111111111111<br></div>
+		
+		<script src="pullToRefresh.js"></script>
+		<script>
+		window.addEventListener("load", function() {
+			pullToRefresh(document.getElementById("wraper"), function() {
+				console.log("触发拖动行为啦！");
+			});
+		}, false);
+		</script>
+    </body>
+</html>
