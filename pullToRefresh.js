@@ -22,8 +22,10 @@ var pullToRefresh = function(element, callback) {
 		var touch = event.touches[0];
 		_temp.endY = touch.pageY;
 		_temp.distance = _temp.endY - _temp.startY;
-		
-		element.style.cssText = "margin-top:"+ damping(_temp.distance) + "px";
+		//下拉		
+                element.style.cssText = "margin-top:"+ damping(_temp.distance) + "px";
+		//上拉
+		element.style.cssText = "margin-bottom:"+ damping(_temp.distance) + "px";
 	}, false);
 	
 	//用移动后的手指位置和最初位置对比确定是不是发生了拖动动作
@@ -35,7 +37,9 @@ var pullToRefresh = function(element, callback) {
 			element.style.cssText = "margin-top:0px;transition:all 600ms "+config.cubic;
 		//上拉
 		}else if(_temp.startY - _temp.endY > config.max){
-			
+			callback();
+			//让拖动的元素复位
+			element.style.cssText = "margin-bottom:0px;transition:all 600ms "+config.cubic;
 		}
 	}, false);
 	
