@@ -8,16 +8,16 @@ var pullToRefresh = function(element, callback) {
 		return;
 	}
 	
-	//������¼���ݣ��������е�ʱ����¼��ڲ���������
+	//用来记录数据，程序运行的时候各事件内部共享数据
 	var _temp = {};
 	
-	//��¼��ָ���������Ļ��λ��
+	//记录手指最初碰到屏幕的位置
 	element.addEventListener("touchstart", function(event) {		console.log(_temp);
 		var touch = event.touches[0];
 		_temp.startY = touch.pageY;
 	}, false);
 	
-	//����Ԫ��������ָ������λ��
+	//控制元素随着手指下拉而位移
 	element.addEventListener("touchmove", function(event) {
 		var touch = event.touches[0];
 		_temp.endY = touch.pageY;
@@ -26,15 +26,20 @@ var pullToRefresh = function(element, callback) {
 		element.style.cssText = "margin-top:"+ damping(_temp.distance) + "px";
 	}, false);
 	
-	//���ƶ������ָλ�ú����λ�öԱ�ȷ���ǲ��Ƿ������϶�����
+	//用移动后的手指位置和最初位置对比确定是不是发生了拖动动作
 	element.addEventListener("touchend", function(event) {
+		//下拉
 		if(_temp.endY - _temp.startY > config.max) {
 			callback();
+			//让拖动的元素复位
 			element.style.cssText = "margin-top:0px;transition:all 600ms "+config.cubic;
+		//上拉
+		}else if(_temp.startY - _temp.endY > config.max){
+			
 		}
 	}, false);
 	
-	//������㣬������������ʱ����������һ������Ȼ�ͱ��ƽ����
+	//阻尼计算，增加阻力拉的时候像拉弹簧一样，不然就变成平移了
 	var damping = function (value) {
 		var step = [20, 40, 60, 80, 100];
 		var rate = [0.5, 0.4, 0.3, 0.2, 0.1];
