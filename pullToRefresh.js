@@ -8,49 +8,53 @@ var pullToRefresh = function(element, callback) {
 		return;
 	}
 	
-	//ÓÃÀ´¼ÇÂ¼Êı¾İ£¬³ÌĞòÔËĞĞµÄÊ±ºò¸÷ÊÂ¼şÄÚ²¿¹²ÏíÊı¾İ
+	//ç”¨æ¥è®°å½•æ•°æ®ï¼Œç¨‹åºè¿è¡Œçš„æ—¶å€™å„äº‹ä»¶å†…éƒ¨å…±äº«æ•°æ®
 	var _temp = {};
 	
-	//¼ÇÂ¼ÊÖÖ¸×î³õÅöµ½ÆÁÄ»µÄÎ»ÖÃ
+	//è®°å½•æ‰‹æŒ‡æœ€åˆç¢°åˆ°å±å¹•çš„ä½ç½®
 	element.addEventListener("touchstart", function(event) {
 		var touch = event.touches[0];
 		_temp.startY = touch.pageY;
 	}, false);
 	
-	//¿ØÖÆÔªËØËæ×ÅÊÖÖ¸ÏÂÀ­¶øÎ»ÒÆ
+	//æ§åˆ¶å…ƒç´ éšç€æ‰‹æŒ‡ä¸‹æ‹‰è€Œä½ç§»
 	element.addEventListener("touchmove", function(event) {
 		var touch = event.touches[0];
 		_temp.endY = touch.pageY;
 		_temp.distance = _temp.endY - _temp.startY;
-		//¶¥²¿ÏÂÀ­
+
+		//åˆ¤æ–­é¡¶éƒ¨ä¸‹æ‹‰è¿˜æ˜¯åº•éƒ¨ä¸Šæ‹‰
 		if(element.getBoundingClientRect().top  == 0) {
 			_temp.direction = 0;
-		//µ×²¿ÉÏÀ­
-		}else if(element.getBoundingClientRect().top == window.pageYOffset) {
+		}else if(document.documentElement.clientHeight - (element.getBoundingClientRect().bottom + window.pageYOffset) < 50) {
 			_temp.direction = 1;
-			//element.style.cssText = "margin-bottom:"+ damping(_temp.distance) + "px";
 		}
-		//element.style.cssText = "margin-top:"+ damping(_temp.distance) + "px";
+
+		if(_temp.direction == 0 && _temp.distance > 0) {
+			element.style.cssText = element.style.cssText + "margin-top:"+ damping(_temp.distance) + "px";
+		}else if(_temp.direction == 1 && _temp.distance < 0) {
+			element.style.cssText = element.style.cssText + "margin-bottom:"+ damping(-(_temp.distance)) + "px";
+		}
+
 		console.log(_temp)
-		console.log(element.getBoundingClientRect().top, window.pageYOffset)
 	}, false);
 	
-	//ÓÃÒÆ¶¯ºóµÄÊÖÖ¸Î»ÖÃºÍ×î³õÎ»ÖÃ¶Ô±ÈÈ·¶¨ÊÇ²»ÊÇ·¢ÉúÁËÍÏ¶¯¶¯×÷
+	//ç”¨ç§»åŠ¨åçš„æ‰‹æŒ‡ä½ç½®å’Œæœ€åˆä½ç½®å¯¹æ¯”ç¡®å®šæ˜¯ä¸æ˜¯å‘ç”Ÿäº†æ‹–åŠ¨åŠ¨ä½œ
 	element.addEventListener("touchend", function(event) {
-		//ÏÂÀ­
-		if(_temp.endY - _temp.startY > config.max) {
+		//ä¸‹æ‹‰
+		if(_temp.direction == 0) {
 			callback();
-			//ÈÃÍÏ¶¯µÄÔªËØ¸´Î»
-			element.style.cssText = "margin-top:0px;transition:all 600ms "+config.cubic;
-		//ÉÏÀ­
-		}else if(_temp.startY - _temp.endY > config.max){
+			//è®©æ‹–åŠ¨çš„å…ƒç´ å¤ä½
+			element.style.cssText = element.style.cssText + "margin-top:0px;transition:all 600ms "+config.cubic;
+		//ä¸Šæ‹‰
+		}else if(_temp.direction == 1) {
 			callback();
-			//ÈÃÍÏ¶¯µÄÔªËØ¸´Î»
-			element.style.cssText = "margin-bottom:0px;transition:all 600ms "+config.cubic;
+			//è®©æ‹–åŠ¨çš„å…ƒç´ å¤ä½
+			element.style.cssText = element.style.cssText + "margin-bottom:0px;transition:all 600ms "+config.cubic;
 		}
 	}, false);
 	
-	//×èÄá¼ÆËã£¬Ôö¼Ó×èÁ¦À­µÄÊ±ºòÏñÀ­µ¯»ÉÒ»Ñù£¬²»È»¾Í±ä³ÉÆ½ÒÆÁË
+	//é˜»å°¼è®¡ç®—ï¼Œå¢åŠ é˜»åŠ›æ‹‰çš„æ—¶å€™åƒæ‹‰å¼¹ç°§ä¸€æ ·ï¼Œä¸ç„¶å°±å˜æˆå¹³ç§»äº†
 	var damping = function (value) {
 		var step = [20, 40, 60, 80, 100];
 		var rate = [0.5, 0.4, 0.3, 0.2, 0.1];
