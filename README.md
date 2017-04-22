@@ -1,4 +1,4 @@
-#pullToRefresh 
+# pullToRefresh 
 
 使用（usage）： 
 pullToRefresh(document.getElementById("wraper"), function() {//do something});
